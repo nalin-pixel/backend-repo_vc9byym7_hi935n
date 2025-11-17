@@ -11,8 +11,8 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional, List
 
 # Example schemas (replace with your own):
 
@@ -22,7 +22,7 @@ class User(BaseModel):
     Collection name: "user" (lowercase of class name)
     """
     name: str = Field(..., description="Full name")
-    email: str = Field(..., description="Email address")
+    email: EmailStr = Field(..., description="Email address")
     address: str = Field(..., description="Address")
     age: Optional[int] = Field(None, ge=0, le=120, description="Age in years")
     is_active: bool = Field(True, description="Whether user is active")
@@ -40,6 +40,23 @@ class Product(BaseModel):
 
 # Add your own schemas here:
 # --------------------------------------------------
+
+class Note(BaseModel):
+    """
+    Notes collection schema for engineering students
+    Collection name: "note"
+    """
+    title: str = Field(..., min_length=3, max_length=120, description="Note title")
+    subject: str = Field(..., min_length=2, max_length=80, description="Subject or course name")
+    branch: Optional[str] = Field(None, description="Engineering branch e.g., CSE, ECE, ME, CE")
+    semester: Optional[str] = Field(None, description="Semester or year e.g., 1st, 2nd, 3rd, 4th")
+    description: Optional[str] = Field(None, max_length=500, description="Short description of the note")
+    content: Optional[str] = Field(None, description="Text/markdown content of the note")
+    file_url: Optional[str] = Field(None, description="Public URL to a file (PDF, DOC, etc.)")
+    tags: Optional[List[str]] = Field(default_factory=list, description="Tags for quick search")
+    uploader_name: Optional[str] = Field(None, description="Name of the uploader")
+    uploader_email: Optional[EmailStr] = Field(None, description="Email of the uploader")
+    likes: int = Field(0, ge=0, description="Number of likes")
 
 # Note: The Flames database viewer will automatically:
 # 1. Read these schemas from GET /schema endpoint
